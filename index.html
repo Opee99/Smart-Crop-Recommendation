@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Crop Prediction</title>
+  <style>
+    body {
+      font-family: 'Segoe UI', sans-serif;
+      background: linear-gradient(135deg, #d4fc79, #96e6a1);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      margin: 0;
+    }
+    .container {
+      background-color: #ffffff;
+      padding: 30px;
+      border-radius: 12px;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+      width: 90%;
+      max-width: 600px;
+    }
+    h1 {
+      text-align: center;
+      color: #2e7d32;
+      margin-bottom: 20px;
+    }
+    form {
+      display: flex;
+      flex-direction: column;
+    }
+    label {
+      margin: 10px 0 5px;
+      font-weight: 600;
+      color: #333;
+    }
+    input[type="text"] {
+      padding: 10px;
+      border: 1px solid #ccc;
+      border-radius: 6px;
+      font-size: 16px;
+    }
+    input[type="submit"] {
+      margin-top: 20px;
+      padding: 12px;
+      background-color: #2e7d32;
+      color: white;
+      border: none;
+      border-radius: 6px;
+      font-size: 16px;
+      cursor: pointer;
+      transition: background-color 0.3s;
+    }
+    input[type="submit"]:hover {
+      background-color: #1b5e20;
+    }
+    footer {
+      text-align: center;
+      margin-top: 15px;
+      font-size: 14px;
+      color: #555;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>Predict Your Best Crop</h1>
+    <form id="cropForm">
+      <label for="N">Nitrogen (N):</label>
+      <input type="text" name="N" required>
+      <label for="P">Phosphorus (P):</label>
+      <input type="text" name="P" required>
+      <label for="K">Potassium (K):</label>
+      <input type="text" name="K" required>
+      <label for="temperature">Temperature (°C):</label>
+      <input type="text" name="temperature" required>
+      <label for="humidity">Humidity (%):</label>
+      <input type="text" name="humidity" required>
+      <label for="ph">Soil pH:</label>
+      <input type="text" name="ph" required>
+      <label for="rainfall">Rainfall (mm):</label>
+      <input type="text" name="rainfall" required>
+      <input type="submit" value="Predict Crop">
+    </form>
+    <footer>Powered by Random Forest Classifier</footer>
+  </div>
+  <script>
+    const form = document.getElementById('cropForm');
+    form.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const formData = new FormData(form);
+      const data = {};
+      formData.forEach((value, key) => data[key] = value);
+      const apiURL = "https://YOUR_NGROK_URL.ngrok-free.app/predict";
+      try {
+        const response = await fetch(apiURL, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(data)
+        });
+        const result = await response.json();
+        if (result.crop) {
+          sessionStorage.setItem("crop_result", result.crop);
+          window.location.href = "result.html";
+        } else {
+          alert("Prediction failed: " + JSON.stringify(result));
+        }
+      } catch (err) {
+        alert("Error contacting server. Check if your API is running.\n\n" + err);
+      }
+    });
+  </script>
+</body>
+</html>
