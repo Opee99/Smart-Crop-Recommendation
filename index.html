@@ -93,7 +93,8 @@
       const formData = new FormData(form);
       const data = {};
       formData.forEach((value, key) => data[key] = value);
-      const apiURL = "https://YOUR_NGROK_URL.ngrok-free.app/predict";
+      const apiURL = "https://b918-34-9-123-183.ngrok-free.app/predict";
+
       try {
         const response = await fetch(apiURL, {
           method: "POST",
